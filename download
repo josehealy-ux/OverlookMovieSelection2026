@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overlook 2026 — Programmer's Ballot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15161B; --panel:#1E2027; --panel2:#24262F; --line:#2E3138;
+  --text:#ECE7DB; --muted:#9A968C; --faint:#6E6B64;
+  --gold:#E8B84B; --gold-dim:#B8923A; --cool:#7FB0AA; --cool-soft:rgba(127,176,170,.12);
+  --danger:#CF6A5E;
+  --disp:'Oswald',Impact,'Arial Narrow',sans-serif;
+  --body:'Inter',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;background-image:radial-gradient(140% 80% at 50% -10%, #1c1d24 0%, var(--ink) 60%);min-height:100vh}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px 80px}
+.tnum{font-variant-numeric:tabular-nums}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+header.marquee{padding:30px 0 18px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.bulbs{display:flex;gap:9px;margin-bottom:16px}
+.bulbs span{width:7px;height:7px;border-radius:50%;background:var(--gold-dim);box-shadow:0 0 7px 1px rgba(232,184,75,.5)}
+.bulbs span:nth-child(odd){background:var(--gold);box-shadow:0 0 10px 2px rgba(232,184,75,.65)}
+.wordmark{font-family:var(--disp);font-weight:700;letter-spacing:.06em;font-size:clamp(30px,5vw,46px);line-height:.98;text-transform:uppercase;margin:0}
+.wordmark .yr{color:var(--gold)}
+.kicker{font-family:var(--disp);text-transform:uppercase;letter-spacing:.32em;font-size:12px;color:var(--muted);font-weight:500;margin:0 0 10px}
+.lede{color:var(--muted);max-width:64ch;margin:10px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin:18px 0 20px}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px}
+.tabs button{background:transparent;border:0;color:var(--muted);padding:8px 16px;border-radius:7px;font-family:var(--disp);text-transform:uppercase;letter-spacing:.1em;font-size:13px;font-weight:500}
+.tabs button.on{background:var(--panel2);color:var(--text)}
+.tabs button .pip{display:inline-block;margin-left:7px;color:var(--cool);font-weight:700}
+.namefield{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px}
+.namefield .lab{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-size:11px}
+input[type=text],input[type=password]{background:var(--ink);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:9px 12px;font-size:14px;font-family:inherit}
+.namefield input{width:170px}
+.namefield input.need{border-color:var(--gold);box-shadow:0 0 0 2px rgba(232,184,75,.25)}
+.btn{background:var(--gold);color:#1a1407;border:0;border-radius:9px;padding:11px 18px;font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:13.5px}
+.btn:hover{background:#f1c560}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn.cool{background:var(--cool);color:#0d1413} .btn.cool:hover{background:#94c0bb}
+.btn.danger{background:transparent;border:1px solid var(--danger);color:var(--danger)}
+.btn.danger:hover{background:rgba(207,106,94,.12)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:8px 13px;font-size:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;position:sticky;top:0;z-index:30}
+.toolbar .grp{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toolbar input[type=text]{width:190px}
+.toolbar select{background:var(--ink);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:9px 12px;font-size:13.5px;font-family:inherit}
+.toolbar .lab{font-family:var(--disp);text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--muted)}
+.status{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.status .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.status.done .dot{background:var(--cool)}
+.hint{color:var(--faint);font-size:12.5px;margin:10px 2px 14px}
+.list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.card{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;transition:border-color .12s,box-shadow .12s}
+.card.drag{opacity:.4} .card.over{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.card .rank{font-family:var(--disp);font-weight:700;font-size:34px;color:var(--gold);line-height:1;text-align:center;padding-top:2px;cursor:grab;user-select:none}
+.card .rank small{display:block;font-size:9px;letter-spacing:.18em;color:var(--faint);font-weight:500;margin-top:3px}
+.body{min-width:0}
+.title{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:.01em;margin:0}
+.title .y{color:var(--muted);font-weight:400;font-size:15px;margin-left:6px}
+.desc{color:var(--muted);font-size:13.5px;margin:5px 0 0;cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.desc.open{-webkit-line-clamp:unset}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:11.5px;color:var(--muted);background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:3px 9px;display:inline-flex;gap:5px;align-items:center}
+.chip b{color:var(--text);font-weight:600}
+.chip .k{font-family:var(--disp);text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;color:var(--faint)}
+.ctrls{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.ctrls .row{display:flex;gap:6px}
+.mv{width:32px;height:30px;background:var(--ink);border:1px solid var(--line);color:var(--text);border-radius:7px;font-size:14px;display:flex;align-items:center;justify-content:center;line-height:1}
+.mv:hover{border-color:var(--gold);color:var(--gold)}
+.jump{display:flex;gap:5px;align-items:center}
+.jump input{width:52px;text-align:center;padding:6px;font-size:13px;background:var(--ink);border:1px solid var(--line);color:var(--text);border-radius:7px;font-family:inherit}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+.panel h3{font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin:0 0 4px;font-size:19px}
+.panel .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.voters{display:flex;flex-wrap:wrap;gap:8px}
+.vchip{display:inline-flex;align-items:center;gap:8px;background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px}
+.vchip.me{border-color:var(--gold)}
+.vchip .d{width:8px;height:8px;border-radius:50%;background:var(--cool)}
+.vchip time{color:var(--faint);font-size:11.5px}
+.vchip button{background:transparent;border:0;color:var(--faint);font-size:15px;line-height:1;padding:0 0 0 4px}
+.vchip button:hover{color:var(--danger)}
+.codeacts{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.rtable{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.rrow{display:grid;grid-template-columns:52px 1fr 150px 96px;gap:14px;align-items:center;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+.rrow.head{background:transparent;border:0;padding:4px 14px;color:var(--faint)}
+.rrow.head span{font-family:var(--disp);text-transform:uppercase;letter-spacing:.12em;font-size:10.5px}
+.rrow .orank{font-family:var(--disp);font-weight:700;font-size:26px;color:var(--cool);text-align:center;line-height:1}
+.rrow .rtitle{font-family:var(--disp);font-weight:500;font-size:17px}
+.rrow .rtitle .y{color:var(--muted);font-weight:400;font-size:13px;margin-left:5px}
+.rrow .rtitle small{display:block;color:var(--faint);font-size:11.5px;font-family:var(--body);letter-spacing:0;text-transform:none;margin-top:2px}
+.spread{height:8px;background:#15161b;border-radius:5px;position:relative;border:1px solid var(--line)}
+.spread .fill{position:absolute;top:-1px;bottom:-1px;background:linear-gradient(90deg,var(--cool-soft),var(--cool));border-radius:5px;opacity:.55}
+.spread .avg{position:absolute;top:-3px;width:3px;height:12px;background:var(--gold);border-radius:2px}
+.spread-lab{font-size:10.5px;color:var(--faint);margin-top:4px;display:flex;justify-content:space-between}
+.avgnum{font-family:var(--disp);font-weight:600;font-size:20px;text-align:right}
+.avgnum small{display:block;font-family:var(--body);font-size:10.5px;color:var(--faint);letter-spacing:0;text-transform:none;font-weight:400}
+.empty{text-align:center;color:var(--muted);padding:30px 10px} .empty b{color:var(--text)}
+.banner{background:rgba(207,106,94,.1);border:1px solid var(--danger);color:#f0b3ab;border-radius:10px;padding:11px 14px;margin:0 0 14px;font-size:13.5px}
+.adminrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--cool);color:#0d1413;font-weight:600;padding:12px 22px;border-radius:10px;font-size:14px;z-index:80;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.toast.err{background:var(--danger);color:#2a0f0b}
+.foot{color:var(--faint);font-size:12px;margin-top:24px;line-height:1.6}
+@media (max-width:680px){
+  .card{grid-template-columns:48px 1fr;gap:10px}
+  .card .ctrls{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:10px;margin-top:2px}
+  .rrow{grid-template-columns:42px 1fr;gap:10px}
+  .rrow .spread-wrap,.rrow .avgnum{grid-column:1 / -1} .rrow .avgnum{text-align:left}
+  .toolbar{position:static} .toolbar input[type=text]{width:100%} .namefield input{width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const FILMS = [{"id": 1, "title": "A Beautiful Day in the Neighborhood", "year": "2019", "desc": "A jaded journalist assigned to profile Fred Rogers (Tom Hanks) is gradually transformed by the TV host's empathy and decency. Based on a true friendship.", "runtime": 107, "imdb": 7.2, "rtCritics": 95, "rtAudience": 92, "rtRatings": "10,000+"}, {"id": 2, "title": "The Accountant 2", "year": "2025", "desc": "Autistic forensic accountant Christian Wolff and his lethal brother investigate a murder tied to a deadly conspiracy.", "runtime": 125, "imdb": 7.3, "rtCritics": 75, "rtAudience": 92, "rtRatings": "5,000+"}, {"id": 3, "title": "Sense and Sensibility", "year": "1995", "desc": "Two sisters of contrasting temperaments navigate love and financial hardship in Georgian England. Austen.", "runtime": 136, "imdb": 7.7, "rtCritics": 97, "rtAudience": 90, "rtRatings": "100,000+"}, {"id": 4, "title": "A Man for All Seasons", "year": "1966", "desc": "Sir Thomas More refuses to endorse Henry VIII's divorce, at the cost of his life. Based on history.", "runtime": 120, "imdb": 7.7, "rtCritics": 89, "rtAudience": 87, "rtRatings": "5,000+"}, {"id": 5, "title": "My Fair Lady", "year": "1964", "desc": "A phonetics professor bets he can pass off a Cockney flower girl as a duchess. Musical.", "runtime": 170, "imdb": 7.8, "rtCritics": 95, "rtAudience": "≈90*", "rtRatings": "—"}, {"id": 6, "title": "Kung Fu Hustle", "year": "2004", "desc": "In 1940s Shanghai, a wannabe gangster stumbles into a slum that secretly harbors retired kung fu masters as rival gangs descend. Cantonese.", "runtime": 99, "imdb": 7.8, "rtCritics": 90, "rtAudience": 89, "rtRatings": "100,000+"}, {"id": 7, "title": "The King of Comedy", "year": "1982", "desc": "An obsessive aspiring comedian stalks and kidnaps a late-night TV host to force his big break. Scorsese satire.", "runtime": 109, "imdb": 7.8, "rtCritics": 89, "rtAudience": 90, "rtRatings": "25,000+"}, {"id": 8, "title": "Back to the Future Part II", "year": "1989", "desc": "Marty and Doc travel to 2015 and an altered 1985, then back to 1955 to repair the timeline.", "runtime": 108, "imdb": 7.8, "rtCritics": 63, "rtAudience": 86, "rtRatings": "250,000+"}, {"id": 9, "title": "Perfect Days", "year": "2023", "desc": "A Tokyo public-toilet cleaner finds beauty and contentment in the quiet routines of his simple daily life.", "runtime": 124, "imdb": 7.9, "rtCritics": 96, "rtAudience": 90, "rtRatings": "—"}, {"id": 10, "title": "Hamnet", "year": "2025", "desc": "Shakespeare and his wife Agnes grieve the death of their young son — a loss that echoes in the play Hamlet.", "runtime": 125, "imdb": 7.9, "rtCritics": 87, "rtAudience": 93, "rtRatings": "2,500+"}, {"id": 11, "title": "Lage Raho Munna Bhai", "year": "2006", "desc": "A Mumbai gangster, visited by visions of Mahatma Gandhi, adopts 'Gandhigiri' (Gandhian principles) to win a radio host's heart and right local wrongs. Hindi comedy.", "runtime": 145, "imdb": 8, "rtCritics": "—", "rtAudience": 90, "rtRatings": "5,000+"}, {"id": 12, "title": "Short Term 12", "year": "2013", "desc": "A young supervisor at a group home for at-risk teens (Brie Larson) bonds with a troubled new resident while confronting her own past.", "runtime": 96, "imdb": 8, "rtCritics": 98, "rtAudience": 92, "rtRatings": "10,000+"}, {"id": 13, "title": "Central Station (Central do Brasil)", "year": "1998", "desc": "A jaded letter-writer reluctantly helps an orphaned boy travel across Brazil to find his father.", "runtime": 110, "imdb": 8, "rtCritics": 94, "rtAudience": 95, "rtRatings": "10,000+"}, {"id": 14, "title": "12 Monkeys", "year": "1995", "desc": "A convict is sent back in time to trace the source of a plague that nearly wiped out humanity.", "runtime": 129, "imdb": 8, "rtCritics": 88, "rtAudience": 88, "rtRatings": "250,000+"}, {"id": 15, "title": "The Best Years of Our Lives", "year": "1946", "desc": "Three WWII veterans return home to the same town and struggle to readjust to civilian life.", "runtime": 170, "imdb": 8.1, "rtCritics": 97, "rtAudience": 93, "rtRatings": "10,000+"}, {"id": 16, "title": "Fargo", "year": "1996", "desc": "A pregnant Minnesota police chief investigates a botched kidnapping scheme that leaves a trail of bodies.", "runtime": 98, "imdb": 8.1, "rtCritics": 95, "rtAudience": 92, "rtRatings": "100,000+"}, {"id": 17, "title": "The Man Who Shot Liberty Valance", "year": "1962", "desc": "A senator returns for a funeral and recalls how he really became famous for killing a notorious outlaw.", "runtime": 123, "imdb": 8.1, "rtCritics": 95, "rtAudience": 92, "rtRatings": "10,000+"}, {"id": 18, "title": "The Truman Show", "year": "1998", "desc": "An insurance salesman slowly discovers his entire life is an elaborate reality-TV show broadcast to the world from a giant domed set.", "runtime": 107, "imdb": 8.1, "rtCritics": 94, "rtAudience": 89, "rtRatings": "—"}, {"id": 19, "title": "Groundhog Day", "year": "1993", "desc": "A cynical weatherman is trapped reliving the same day until he changes his outlook on life.", "runtime": 101, "imdb": 8.1, "rtCritics": 94, "rtAudience": 88, "rtRatings": "250,000+"}, {"id": 20, "title": "Pirates of the Caribbean: The Curse of the Black Pearl", "year": "2003", "desc": "Roguish Capt. Jack Sparrow and a young blacksmith chase a crew of cursed, undead pirates to rescue the governor's daughter.", "runtime": 143, "imdb": 8.1, "rtCritics": 79, "rtAudience": 86, "rtRatings": "250,000+"}, {"id": 21, "title": "Tourist Family", "year": "2025", "desc": "A Sri Lankan Tamil family illegally settles in India and wins over a wary neighborhood through kindness and humor.", "runtime": 127, "imdb": 8.2, "rtCritics": "—", "rtAudience": 93, "rtRatings": "50+"}, {"id": 22, "title": "Jurassic Park", "year": "1993", "desc": "A billionaire's island theme park of cloned dinosaurs turns deadly when the attractions break loose during a preview tour.", "runtime": 127, "imdb": 8.2, "rtCritics": 91, "rtAudience": 91, "rtRatings": "250,000+"}, {"id": 23, "title": "Dial M for Murder", "year": "1954", "desc": "A husband blackmails a man into murdering his wealthy wife, but the plan goes fatally awry.", "runtime": 105, "imdb": 8.2, "rtCritics": 90, "rtAudience": 92, "rtRatings": "25,000+"}, {"id": 24, "title": "To Kill a Mockingbird", "year": "1962", "desc": "A small-town Southern lawyer defends a Black man falsely accused of rape, seen through his daughter's eyes.", "runtime": 129, "imdb": 8.3, "rtCritics": 93, "rtAudience": 92, "rtRatings": "100,000+"}, {"id": 25, "title": "Braveheart", "year": "1995", "desc": "13th-century Scottish warrior William Wallace leads a rebellion against English rule after personal tragedy.", "runtime": 178, "imdb": 8.3, "rtCritics": 78, "rtAudience": 85, "rtRatings": "—"}, {"id": 26, "title": "Witness for the Prosecution", "year": "1957", "desc": "An ailing barrister defends a man accused of murder in a courtroom drama full of twists.", "runtime": 116, "imdb": 8.4, "rtCritics": 100, "rtAudience": 95, "rtRatings": "5,000+"}, {"id": 27, "title": "Raiders of the Lost Ark", "year": "1981", "desc": "Archaeologist Indiana Jones races the Nazis to recover the fabled Ark of the Covenant.", "runtime": 115, "imdb": 8.4, "rtCritics": 95, "rtAudience": 96, "rtRatings": "—"}, {"id": 28, "title": "Rear Window", "year": "1954", "desc": "A wheelchair-bound photographer becomes convinced a neighbor across the courtyard has committed murder.", "runtime": 112, "imdb": 8.5, "rtCritics": 99, "rtAudience": 95, "rtRatings": "100,000+"}, {"id": 29, "title": "The Pianist", "year": "2002", "desc": "A Polish-Jewish pianist struggles to survive in Warsaw during the Nazi occupation. Based on a true story.", "runtime": 150, "imdb": 8.5, "rtCritics": 95, "rtAudience": 96, "rtRatings": "250,000+"}, {"id": 30, "title": "Terminator 2: Judgment Day", "year": "1991", "desc": "A reprogrammed Terminator protects young John Connor from the deadlier, shape-shifting T-1000 sent back in time to kill him.", "runtime": 137, "imdb": 8.5, "rtCritics": 90, "rtAudience": 95, "rtRatings": "250,000+"}, {"id": 31, "title": "The Green Mile", "year": "1999", "desc": "A Depression-era death-row guard encounters a gentle giant inmate who possesses a miraculous healing gift.", "runtime": 189, "imdb": 8.5, "rtCritics": 78, "rtAudience": 94, "rtRatings": "250,000+"}, {"id": 32, "title": "It's a Wonderful Life", "year": "1946", "desc": "A despairing small-town man is shown by an angel how many lives he touched, and what his town would be without him.", "runtime": 130, "imdb": 8.6, "rtCritics": 94, "rtAudience": 95, "rtRatings": "100,000+"}, {"id": 33, "title": "Saving Private Ryan", "year": "1998", "desc": "After D-Day, a U.S. Army captain leads a squad behind enemy lines to find and bring home a paratrooper whose brothers were killed.", "runtime": 169, "imdb": 8.6, "rtCritics": 94, "rtAudience": 95, "rtRatings": "250,000+"}, {"id": 34, "title": "One Flew Over the Cuckoo's Nest", "year": "1975", "desc": "A rebellious new patient galvanizes the residents of a mental ward against its quietly tyrannical head nurse.", "runtime": 133, "imdb": 8.6, "rtCritics": 93, "rtAudience": 96, "rtRatings": "—"}, {"id": 35, "title": "Seven Samurai", "year": "1954", "desc": "A poor farming village hires seven masterless samurai to defend it from marauding bandits. Japanese.", "runtime": 207, "imdb": 8.7, "rtCritics": 100, "rtAudience": 97, "rtRatings": "50,000+"}, {"id": 36, "title": "Goodfellas", "year": "1990", "desc": "The rise and fall of mob associate Henry Hill across three decades in the New York Mafia. Based on a true story.", "runtime": 145, "imdb": 8.7, "rtCritics": 93, "rtAudience": 97, "rtRatings": "250,000+"}, {"id": 37, "title": "The Matrix", "year": "1999", "desc": "A hacker discovers reality is a simulation and joins a rebellion against the machines that enslave humanity.", "runtime": 136, "imdb": 8.7, "rtCritics": 83, "rtAudience": 85, "rtRatings": "250,000+"}, {"id": 38, "title": "Inception", "year": "2010", "desc": "A thief who steals secrets through dreams is hired to plant an idea deep in a target's subconscious.", "runtime": 148, "imdb": 8.8, "rtCritics": 87, "rtAudience": 91, "rtRatings": "250,000+"}, {"id": 39, "title": "Forrest Gump", "year": "1994", "desc": "A kind-hearted Alabama man with a low IQ unwittingly shapes decades of American history.", "runtime": 142, "imdb": 8.8, "rtCritics": 75, "rtAudience": 95, "rtRatings": "250,000+"}, {"id": 40, "title": "Schindler's List", "year": "1993", "desc": "A German businessman saves over a thousand Jewish refugees by employing them. Based on a true story.", "runtime": 195, "imdb": 9, "rtCritics": 98, "rtAudience": 97, "rtRatings": "250,000+"}];
+const N = FILMS.length;
+const byId = Object.fromEntries(FILMS.map(f=>[f.id,f]));
+const state = { mode:'vote', voterName:'', order:FILMS.map(f=>f.id), filter:'',
+  submitted:false, submittedAt:null, busy:false, server:null, adminKey:'', lastLoaded:'' };
+let poll=null;
+
+const slug = s => (s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'voter';
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtNum=(v,suf='')=>(v===null||v===undefined||v==='')?'—':(v+suf);
+const fmtTime=ts=>{try{return new Date(ts).toLocaleString([],{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}catch(e){return '';}};
+
+async function api(p,opts){
+  const r=await fetch(p,Object.assign({headers:{'Content-Type':'application/json'}},opts||{}));
+  if(!r.ok){ let m='Something went wrong'; try{m=(await r.json()).error||m;}catch(e){} const err=new Error(m); err.status=r.status; throw err; }
+  return r.json();
+}
+
+function sortResults(results){
+  return results.slice().sort((a,b)=>{
+    if(a.n===0&&b.n===0) return a.id-b.id;
+    if(a.n===0) return 1; if(b.n===0) return -1;
+    if(a.avg!==b.avg) return a.avg-b.avg;
+    if(a.firsts!==b.firsts) return b.firsts-a.firsts;
+    if(a.median!==b.median) return a.median-b.median;
+    return (byId[b.id].imdb||0)-(byId[a.id].imdb||0);
+  });
+}
+
+/* ---- shell ---- */
+function render(){
+  const app=document.getElementById('app');
+  app.innerHTML = headerHTML() + barHTML() + (state.mode==='vote'?voteHTML():resultsHTML());
+  if(state.mode==='vote') wireVote(); else wireResults();
+}
+function headerHTML(){
+  return `<header class="marquee">
+    <div class="bulbs">${'<span></span>'.repeat(11)}</div>
+    <p class="kicker">Selection Committee · Programmer's Ballot</p>
+    <h1 class="wordmark">Overlook <span class="yr">2026</span></h1>
+    <p class="lede">${state.mode==='vote'
+      ? `Drag the ${N} films into your order — number 1 is your top pick — then hit <b>Submit my ranking</b>. Enter the same name later to update it.`
+      : `The committee's live combined ranking, updating as ballots come in.`}</p>
+  </header>`;
+}
+function barHTML(){
+  const right = state.mode==='vote'
+    ? `<div class="namefield"><span class="lab">Your name</span><input type="text" id="vname" maxlength="40" placeholder="e.g. Jordan" value="${esc(state.voterName)}" autocomplete="off"></div>`
+    : `<div class="namefield"><span class="lab">${state.server?state.server.count:0} ballot${state.server&&state.server.count===1?'':'s'} in</span></div>`;
+  const pip = state.server&&state.server.count? `<span class="pip">${state.server.count}</span>`:'';
+  return `<div class="bar">
+    <div class="tabs">
+      <button id="m-vote" class="${state.mode==='vote'?'on':''}">Rank the slate</button>
+      <button id="m-res" class="${state.mode==='results'?'on':''}">The room's verdict${pip}</button>
+    </div>${right}
+  </div>`;
+}
+
+/* ---- vote ---- */
+const SEEDS={current:'Keep current order',imdb:'IMDb score (high→low)',rtc:'RT Critics (high→low)',rta:'RT Audience (high→low)',az:'Title A→Z',shuffle:'Shuffle'};
+function voteHTML(){
+  const opts=Object.entries(SEEDS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  const st = state.submitted
+    ? `<span class="status done"><span class="dot"></span>Submitted ${fmtTime(state.submittedAt)} — re-submit to update</span>`
+    : `<span class="status"><span class="dot"></span>Not submitted yet</span>`;
+  return `<div class="toolbar">
+    <div class="grp">
+      <input type="text" id="filter" placeholder="Find a film…" value="${esc(state.filter)}">
+      <span class="lab">Start from</span><select id="seed">${opts}</select>
+    </div>
+    <div class="grp">${st}<button class="btn" id="submit" ${state.busy?'disabled':''}>${state.submitted?'Update my ranking':'Submit my ranking'}</button></div>
+  </div>
+  <p class="hint">Drag a card by its rank number, use ▲ ▼ ⤒ ⤓, or type a new position.${state.filter?' <b style="color:var(--gold)">Filtered — clear the search box to drag-reorder.</b>':''}</p>
+  <div class="list" id="list">${state.order.map((id,i)=>cardHTML(byId[id],i)).join('')}</div>`;
+}
+function cardHTML(f,i){
+  if(state.filter && !f.title.toLowerCase().includes(state.filter.toLowerCase())) return '';
+  const drag = state.filter? '' : 'draggable="true"';
+  return `<div class="card" data-id="${f.id}" ${drag}>
+    <div class="rank" title="Drag to reorder">${i+1}<small>RANK</small></div>
+    <div class="body">
+      <p class="title">${esc(f.title)}<span class="y">${esc(f.year)}</span></p>
+      <p class="desc" title="Click to expand">${esc(f.desc)}</p>
+      <div class="meta">
+        <span class="chip"><span class="k">Run</span><b>${fmtNum(f.runtime)} min</b></span>
+        <span class="chip"><span class="k">IMDb</span><b>${fmtNum(f.imdb)}</b></span>
+        <span class="chip"><span class="k">RT Crit</span><b>${fmtNum(f.rtCritics,'%')}</b></span>
+        <span class="chip"><span class="k">RT Aud</span><b>${fmtNum(f.rtAudience,'%')}</b></span>
+        <span class="chip"><span class="k">Ratings</span><b>${esc(f.rtRatings||'—')}</b></span>
+      </div>
+    </div>
+    <div class="ctrls">
+      <div class="row">
+        <button class="mv" data-act="top" title="Move to top">⤒</button>
+        <button class="mv" data-act="up" title="Up">▲</button>
+        <button class="mv" data-act="down" title="Down">▼</button>
+        <button class="mv" data-act="bottom" title="Move to bottom">⤓</button>
+      </div>
+      <div class="jump"><span class="lab" style="font-size:10px;color:var(--faint)">to&nbsp;#</span>
+        <input type="text" inputmode="numeric" class="jin" value="${i+1}" aria-label="Set rank for ${esc(f.title)}"></div>
+    </div>
+  </div>`;
+}
+function move(id,act){const a=state.order,from=a.indexOf(id);if(from<0)return;a.splice(from,1);
+  if(act==='top')a.unshift(id);else if(act==='bottom')a.push(id);
+  else if(act==='up')a.splice(Math.max(0,from-1),0,id);else if(act==='down')a.splice(Math.min(a.length,from+1),0,id);
+  renderListOnly();}
+function moveTo(id,pos){const a=state.order,from=a.indexOf(id);if(from<0)return;let to=Math.max(1,Math.min(N,pos))-1;a.splice(from,1);a.splice(to,0,id);renderListOnly();}
+function reorderDrag(src,tgt,after){const a=state.order,from=a.indexOf(src);if(from<0)return;a.splice(from,1);let to=a.indexOf(tgt);if(to<0){a.splice(from,0,src);return;}a.splice(after?to+1:to,0,src);renderListOnly();}
+function renderListOnly(){const list=document.getElementById('list');if(!list)return;list.innerHTML=state.order.map((id,i)=>cardHTML(byId[id],i)).join('');wireList();}
+function wireVote(){
+  document.getElementById('m-vote').onclick=()=>switchMode('vote');
+  document.getElementById('m-res').onclick=()=>switchMode('results');
+  const vn=document.getElementById('vname');
+  vn.oninput=()=>{state.voterName=vn.value;};
+  vn.onblur=()=>maybeLoadMine();
+  const f=document.getElementById('filter'); f.oninput=()=>{state.filter=f.value;renderListOnly();};
+  document.getElementById('seed').onchange=e=>{seed(e.target.value);e.target.value='current';};
+  document.getElementById('submit').onclick=submit;
+  wireList();
+}
+function wireList(){
+  const list=document.getElementById('list');
+  list.querySelectorAll('.card').forEach(card=>{
+    const id=parseInt(card.dataset.id);
+    card.querySelectorAll('.mv').forEach(b=>b.onclick=()=>move(id,b.dataset.act));
+    const jin=card.querySelector('.jin');
+    if(jin){jin.onkeydown=e=>{if(e.key==='Enter'){const v=parseInt(e.target.value);if(v>=1&&v<=N)moveTo(id,v);}};
+      jin.onblur=e=>{const v=parseInt(e.target.value);if(v>=1&&v<=N&&v!==state.order.indexOf(id)+1)moveTo(id,v);};}
+    const d=card.querySelector('.desc'); if(d)d.onclick=()=>d.classList.toggle('open');
+    if(card.getAttribute('draggable')==='true'){
+      card.addEventListener('dragstart',e=>{card.classList.add('drag');e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move';});
+      card.addEventListener('dragend',()=>{card.classList.remove('drag');list.querySelectorAll('.over').forEach(c=>c.classList.remove('over'));});
+      card.addEventListener('dragover',e=>{e.preventDefault();card.classList.add('over');e.dataTransfer.dropEffect='move';autoScroll(e.clientY);});
+      card.addEventListener('dragleave',()=>card.classList.remove('over'));
+      card.addEventListener('drop',e=>{e.preventDefault();card.classList.remove('over');const src=parseInt(e.dataTransfer.getData('text/plain'));if(src===id)return;const rect=card.getBoundingClientRect();reorderDrag(src,id,(e.clientY-rect.top)>rect.height/2);});
+    }
+  });
+}
+let scrollRAF=null;
+function autoScroll(y){const m=90,sp=14;if(scrollRAF)cancelAnimationFrame(scrollRAF);scrollRAF=requestAnimationFrame(()=>{if(y<m)window.scrollBy(0,-sp);else if(y>window.innerHeight-m)window.scrollBy(0,sp);});}
+function seed(kind){if(kind==='current')return;let a=[...FILMS];
+  if(kind==='imdb')a.sort((x,y)=>(y.imdb||0)-(x.imdb||0));
+  else if(kind==='rtc')a.sort((x,y)=>(y.rtCritics||0)-(x.rtCritics||0));
+  else if(kind==='rta')a.sort((x,y)=>(y.rtAudience||0)-(x.rtAudience||0));
+  else if(kind==='az')a.sort((x,y)=>x.title.localeCompare(y.title));
+  else if(kind==='shuffle'){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+  state.order=a.map(f=>f.id);renderListOnly();}
+async function maybeLoadMine(){
+  const name=state.voterName.trim(); if(!name) return;
+  const id=slug(name); if(id===state.lastLoaded) return; state.lastLoaded=id;
+  try{ const b=await api('/api/ballot/'+encodeURIComponent(id));
+    if(b&&Array.isArray(b.order)&&b.order.length===N){ state.order=b.order.slice(); state.submitted=true; state.submittedAt=b.submittedAt; render(); toast('Loaded your saved ranking — edit and re-submit to update'); }
+  }catch(e){ /* 404 = no prior ballot; fine */ }
+}
+async function submit(){
+  const name=state.voterName.trim();
+  if(!name){const vn=document.getElementById('vname');vn.classList.add('need');vn.focus();toast('Add your name first',true);return;}
+  state.busy=true; render();
+  try{
+    const r=await api('/api/ballot',{method:'POST',body:JSON.stringify({name,order:state.order})});
+    state.submitted=true; state.submittedAt=Date.now(); state.busy=false; state.lastLoaded=r.voterId;
+    toast('Ballot submitted'); await switchMode('results');
+  }catch(e){ state.busy=false; render(); toast(e.message||'Could not submit',true); }
+}
+
+/* ---- results ---- */
+function resultsHTML(){
+  const s=state.server;
+  if(!s) return `<div class="panel"><div class="empty">Loading the latest tally…</div></div>`;
+  const sorted=sortResults(s.results).filter(r=>r.n>0);
+  const V=s.count;
+  let lb;
+  if(V===0){ lb=`<div class="empty"><b>No ballots yet.</b><br>As committee members submit, the combined ranking appears here.</div>`; }
+  else{
+    const head=`<div class="rrow head"><span>#</span><span>Film</span><span>Rank spread (best→worst)</span><span style="text-align:right">Avg rank</span></div>`;
+    const body=sorted.map((r,i)=>{const f=byId[r.id];
+      const lo=((r.best-1)/(N-1))*100,hi=((r.worst-1)/(N-1))*100,av=((r.avg-1)/(N-1))*100;
+      return `<div class="rrow"><div class="orank">${i+1}</div>
+        <div class="rtitle">${esc(f.title)}<span class="y">${esc(f.year)}</span>
+          <small>${r.n} ballot${r.n>1?'s':''} · ${r.firsts?`${r.firsts}× #1 · `:''}median ${r.median}</small></div>
+        <div class="spread-wrap"><div class="spread"><div class="fill" style="left:${lo}%;right:${100-hi}%"></div><div class="avg" style="left:${av}%"></div></div>
+          <div class="spread-lab"><span>#${r.best}</span><span>#${r.worst}</span></div></div>
+        <div class="avgnum tnum">${r.avg.toFixed(2)}<small>of ${N}</small></div></div>`;}).join('');
+    lb=`<div class="rtable">${head}${body}</div>`;
+  }
+  const me=slug(state.voterName);
+  const voters=s.voters.map(v=>`<span class="vchip ${slug(v.name)===me&&state.voterName?'me':''}"><span class="d"></span>${esc(v.name)} <time>${fmtTime(v.submittedAt)}</time>${state.adminKey?`<button data-rm="${esc(slug(v.name))}" title="Remove">×</button>`:''}</span>`).join('');
+  return `<div class="panel">
+      <h3>Who's in</h3>
+      <p class="sub">Updates automatically every few seconds.</p>
+      <div class="voters">${voters||'<span class="sub">No one yet.</span>'}</div>
+      <div class="codeacts"><button class="btn ghost" id="backRank">Back to my ranking</button>${V?'<button class="btn cool" id="exportCsv">Export CSV for Excel</button>':''}</div>
+    </div>
+    <div class="panel">
+      <h3>The room's verdict</h3>
+      <p class="sub">Combined ranking by average position across ${V} ballot${V===1?'':'s'} (lower is better — equivalent to a Borda count). Gold tick = average; band = best-to-worst spread.</p>
+      ${lb}
+    </div>
+    <div class="panel" style="border-style:dashed">
+      <h3 style="font-size:15px">Organizer controls</h3>
+      <p class="sub" style="margin-bottom:10px">Enter the admin key (the one set on the server) to remove a ballot or clear the round. Voters don't need this.</p>
+      <div class="adminrow">
+        <input type="password" id="adminKey" placeholder="Admin key" value="${esc(state.adminKey)}" style="width:200px">
+        <button class="btn ghost" id="saveKey">Use key</button>
+        ${state.adminKey&&V?'<button class="btn danger" id="clearAll">Clear all ballots</button>':''}
+      </div>
+    </div>
+    <p class="foot">Average rank and Borda points give the same order when every ballot ranks all ${N} films, so this shows the average for readability. Ties break by more #1 placements, then lower median, then higher IMDb. The server stores rankings but only ever shows the combined result and the list of names — never how any individual ranked.</p>`;
+}
+function wireResults(){
+  document.getElementById('m-vote').onclick=()=>switchMode('vote');
+  document.getElementById('m-res').onclick=()=>switchMode('results');
+  document.getElementById('backRank').onclick=()=>switchMode('vote');
+  const ex=document.getElementById('exportCsv'); if(ex) ex.onclick=exportCSV;
+  const sk=document.getElementById('saveKey'); if(sk) sk.onclick=()=>{state.adminKey=document.getElementById('adminKey').value.trim();render();toast(state.adminKey?'Admin key set':'Admin key cleared');};
+  const ca=document.getElementById('clearAll'); if(ca) ca.onclick=clearAll;
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>removeBallot(b.dataset.rm));
+}
+async function fetchState(rerender){
+  try{ const s=await api('/api/state');
+    const changed = JSON.stringify(state.server)!==JSON.stringify(s);
+    state.server=s; if(rerender||changed) render();
+  }catch(e){ if(rerender) render(); }
+}
+function startPoll(){ stopPoll(); poll=setInterval(()=>{ if(state.mode==='results') fetchState(false); },5000); }
+function stopPoll(){ if(poll){clearInterval(poll);poll=null;} }
+async function removeBallot(voterId){
+  if(!confirm('Remove this ballot?')) return;
+  try{ await api('/api/admin/remove',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':state.adminKey},body:JSON.stringify({voterId})});
+    await fetchState(true); toast('Ballot removed');
+  }catch(e){ toast(e.message,true); }
+}
+async function clearAll(){
+  if(!confirm('Clear EVERYONE\'s ballots? This cannot be undone.')) return;
+  try{ await api('/api/admin/clear',{method:'POST',headers:{'Content-Type':'application/json','x-admin-key':state.adminKey},body:JSON.stringify({})});
+    await fetchState(true); toast('All ballots cleared');
+  }catch(e){ toast(e.message,true); }
+}
+function exportCSV(){
+  const sorted=sortResults(state.server.results).filter(r=>r.n>0);
+  if(!sorted.length){toast('No ballots to export',true);return;}
+  const cols=['Overall Rank','Title','Year','Avg Rank','Ballots','Best','Worst','Median','#1 Votes','Runtime (min)','IMDb (/10)','RT Critics (%)','RT Audience (%)','RT Audience ratings'];
+  const q=v=>{v=(v==null?'':String(v));return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+  const lines=[cols.map(q).join(',')];
+  sorted.forEach((r,i)=>{const f=byId[r.id];lines.push([i+1,f.title,f.year,r.avg.toFixed(2),r.n,r.best,r.worst,r.median,r.firsts,f.runtime,f.imdb,f.rtCritics,f.rtAudience,f.rtRatings].map(q).join(','));});
+  const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='Overlook_2026_combined_ranking.csv';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);toast('CSV downloaded');
+}
+async function switchMode(m){
+  state.mode=m; window.scrollTo({top:0,behavior:'smooth'});
+  if(m==='results'){ render(); await fetchState(true); startPoll(); }
+  else { stopPoll(); render(); }
+}
+let toastTimer=null;
+function toast(msg,err){let t=document.querySelector('.toast');if(t)t.remove();t=document.createElement('div');t.className='toast'+(err?' err':'');t.textContent=msg;document.body.appendChild(t);clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.remove(),2800);}
+render();
+</script>
+</body>
+</html>
